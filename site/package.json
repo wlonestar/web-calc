@@ -4,6 +4,7 @@
     "serve": "webpack serve --config webpack.config.js"
   },
   "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.0.19",
     "web-calc": "file:../pkg"
   },
   "devDependencies": {

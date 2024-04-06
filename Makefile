@@ -4,6 +4,7 @@ build:
 	@rm -f src/calculator.rs
 	@cargo build
 	@wasm-pack build --target bundler
+	@cd site && npm i ../pkg
 	@cd site && npm i -D -S
 
 deploy:
@@ -14,5 +15,6 @@ format:
 
 clean:
 	@rm -f src/calculator.rs
-	@rm -rf pkg
 	@cargo clean
+	@rm -rf pkg
+	@rm -rf site/node_modules

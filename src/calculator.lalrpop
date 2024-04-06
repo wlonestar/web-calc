@@ -90,6 +90,7 @@ PostfixExpr: Box<Expr> = {
 
 PrimaryExpr: Box<Expr> = {
   Integer => Box::new(Expr::IntegerLiteral(<>)),
+  Float => Box::new(Expr::FloatingLiteral(<>)),
   "(" <Expr> ")"
 };
 
@@ -119,3 +120,24 @@ Integer: u64 = {
       })
   },
 };
+
+Float: f64 = {
+  <n:r"[0-9]+[Ee][+-]?[0-9]+"> =>? {
+    n.parse::<f64>()
+      .map_err(|_| ParseError::User {
+        error: CalculatorError::InputTooBig
+      })
+  },
+  <n:r"[0-9]*\.[0-9]+([Ee][+-]?[0-9]+)?"> =>? {
+    n.parse::<f64>()
+      .map_err(|_| ParseError::User {
+        error: CalculatorError::InputTooBig
+      })
+  },
+  <n:r"[0-9]+\.([Ee][+-]?[0-9]+)?"> =>? {
+    n.parse::<f64>()
+      .map_err(|_| ParseError::User {
+        error: CalculatorError::InputTooBig
+      })
+  },
+}

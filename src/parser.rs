@@ -13,9 +13,25 @@ mod tests {
   use lalrpop_util::ParseError;
 
   #[test]
-  fn test_number() {
-    let expr = Parser::new().parse("123").unwrap();
+  fn test_integer() {
+    let parser = Parser::new();
+    let expr = parser.parse("123").unwrap();
     assert_eq!(expr, Box::new(Expr::IntegerLiteral(123)));
+    let expr = parser.parse("0123").unwrap();
+    assert_eq!(expr, Box::new(Expr::IntegerLiteral(0o123)));
+    let expr = parser.parse("0x123").unwrap();
+    assert_eq!(expr, Box::new(Expr::IntegerLiteral(0x123)));
+  }
+
+  #[test]
+  fn test_floating() {
+    let parser = Parser::new();
+    let expr = parser.parse("1e+1").unwrap();
+    assert_eq!(expr, Box::new(Expr::FloatingLiteral(1e+1)));
+    let expr = parser.parse(".1e-3").unwrap();
+    assert_eq!(expr, Box::new(Expr::FloatingLiteral(0.1e-3)));
+    let expr = parser.parse("12.").unwrap();
+    assert_eq!(expr, Box::new(Expr::FloatingLiteral(12.)));
   }
 
   #[test]

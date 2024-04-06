@@ -14,7 +14,7 @@ pub enum CalculateError {
 fn calc(expr: &Expr) -> Result<f64, CalculateError> {
   match expr {
     Expr::IntegerLiteral(n) => Ok(*n as f64),
-    Expr::FloatingLiteral(n) => Ok(*n as f64),
+    Expr::FloatingLiteral(n) => Ok(*n),
     Expr::BinaryOperator(ref lhs, op, ref rhs) => {
       let l = calc(&lhs);
       let r = calc(&rhs);
@@ -130,6 +130,13 @@ mod tests {
     let input = "12";
     let result = evaluate(input).unwrap();
     assert_eq!(result, 12.);
+  }
+
+  #[test]
+  fn test_float() {
+    let input = "1+2.0";
+    let result = evaluate(input).unwrap();
+    assert_eq!(result, 3.0);
   }
 
   #[test]
