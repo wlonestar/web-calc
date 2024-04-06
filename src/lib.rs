@@ -13,6 +13,6 @@ pub mod interpreter;
 pub mod parser;
 
 #[wasm_bindgen]
-pub fn calculate(input: &str) -> Option<i64> {
+pub fn calculate(input: &str) -> Option<f64> {
   evaluate(&input).ok().or(None)
 }

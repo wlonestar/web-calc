@@ -1,6 +1,6 @@
 use std::fmt::{Debug, Error, Formatter};
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq)]
 pub enum OpCode {
   OrOp,    // ||
   AndOp,   // &&
@@ -10,8 +10,6 @@ pub enum OpCode {
   LEOp,    // <=
   GTOp,    // >
   GEOp,    // >=
-  LeftOp,  // <<
-  RightOp, // >>
   Add,     // +
   Sub,     // -
   Mul,     // *
@@ -31,8 +29,6 @@ impl Debug for OpCode {
       OpCode::LEOp => write!(fmt, "<="),
       OpCode::GTOp => write!(fmt, ">"),
       OpCode::GEOp => write!(fmt, ">="),
-      OpCode::LeftOp => write!(fmt, "<<"),
-      OpCode::RightOp => write!(fmt, ">>"),
       OpCode::Add => write!(fmt, "+"),
       OpCode::Sub => write!(fmt, "-"),
       OpCode::Mul => write!(fmt, "*"),
@@ -43,9 +39,10 @@ impl Debug for OpCode {
   }
 }
 
-#[derive(PartialEq, Eq)]
+#[derive(PartialEq)]
 pub enum Expr {
   IntegerLiteral(u64),
+  FloatingLiteral(f64),
   BinaryOperator(Box<Expr>, OpCode, Box<Expr>),
   UnaryOperator(OpCode, Box<Expr>),
   Error,
@@ -63,6 +60,9 @@ impl Debug for Expr {
       match expr {
         IntegerLiteral(n) => {
           writeln!(fmt, "{}IntegerLiteral {}", "  ".repeat(level), n)
+        }
+        FloatingLiteral(n) => {
+          writeln!(fmt, "{}FloatingLiteral {}", "  ".repeat(level), n)
         }
         BinaryOperator(lhs, op, rhs) => {
           writeln!(fmt, "{}BinaryOperator '{:?}'", "  ".repeat(level), op)?;

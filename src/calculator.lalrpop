@@ -42,8 +42,8 @@ EqualityOp: OpCode = {
 }
 
 RelationExpr: Box<Expr> = {
-  RelationExpr RelationOp ShiftExpr => Box::new(Expr::BinaryOperator(<>)),
-  ShiftExpr,
+  RelationExpr RelationOp AdditiveExpr => Box::new(Expr::BinaryOperator(<>)),
+  AdditiveExpr,
 };
 
 RelationOp: OpCode = {
@@ -51,16 +51,6 @@ RelationOp: OpCode = {
   "<=" => OpCode::LEOp,
   ">" => OpCode::GTOp,
   ">=" => OpCode::GEOp,
-};
-
-ShiftExpr: Box<Expr> = {
-  ShiftExpr ShiftOp AdditiveExpr => Box::new(Expr::BinaryOperator(<>)),
-  AdditiveExpr,
-};
-
-ShiftOp: OpCode = {
-  "<<" => OpCode::LeftOp,
-  ">>" => OpCode::RightOp,
 };
 
 AdditiveExpr: Box<Expr> = {
