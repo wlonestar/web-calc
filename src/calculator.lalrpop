@@ -1,0 +1,131 @@
+use crate::ast::{Expr, OpCode};
+
+use super::CalculatorError;
+use lalrpop_util::ParseError;
+
+grammar;
+
+extern {
+  type Error = CalculatorError;
+}
+
+pub Expr: Box<Expr> = {
+  LogicalOrExpr,
+};
+
+LogicalOrExpr: Box<Expr> = {
+  LogicalOrExpr LogicalOrOp LogicalAndExpr => Box::new(Expr::BinaryOperator(<>)),
+  LogicalAndExpr,
+};
+
+LogicalOrOp: OpCode = {
+  "||" => OpCode::OrOp,
+};
+
+LogicalAndExpr: Box<Expr> = {
+  LogicalAndExpr LogicalAndOp EqualityExpr => Box::new(Expr::BinaryOperator(<>)),
+  EqualityExpr,
+};
+
+LogicalAndOp: OpCode = {
+  "&&" => OpCode::AndOp,
+};
+
+EqualityExpr: Box<Expr> = {
+  EqualityExpr EqualityOp RelationExpr => Box::new(Expr::BinaryOperator(<>)),
+  RelationExpr,
+};
+
+EqualityOp: OpCode = {
+  "==" => OpCode::EqOp,
+  "!=" => OpCode::NeOp,
+}
+
+RelationExpr: Box<Expr> = {
+  RelationExpr RelationOp ShiftExpr => Box::new(Expr::BinaryOperator(<>)),
+  ShiftExpr,
+};
+
+RelationOp: OpCode = {
+  "<" => OpCode::LTOp,
+  "<=" => OpCode::LEOp,
+  ">" => OpCode::GTOp,
+  ">=" => OpCode::GEOp,
+};
+
+ShiftExpr: Box<Expr> = {
+  ShiftExpr ShiftOp AdditiveExpr => Box::new(Expr::BinaryOperator(<>)),
+  AdditiveExpr,
+};
+
+ShiftOp: OpCode = {
+  "<<" => OpCode::LeftOp,
+  ">>" => OpCode::RightOp,
+};
+
+AdditiveExpr: Box<Expr> = {
+  AdditiveExpr AdditiveOp MultiplicativeExpr => Box::new(Expr::BinaryOperator(<>)),
+  MultiplicativeExpr,
+};
+
+AdditiveOp: OpCode = {
+  "+" => OpCode::Add,
+  "-" => OpCode::Sub,
+};
+
+MultiplicativeExpr: Box<Expr> = {
+  MultiplicativeExpr MultiplicativeOp UnaryExpr => Box::new(Expr::BinaryOperator(<>)),
+  UnaryExpr,
+};
+
+MultiplicativeOp: OpCode = {
+  "*" => OpCode::Mul,
+  "/" => OpCode::Div,
+  "%" => OpCode::Mod,
+};
+
+UnaryExpr: Box<Expr> = {
+  UnaryOp UnaryExpr => Box::new(Expr::UnaryOperator(<>)),
+  PostfixExpr,
+};
+
+UnaryOp: OpCode = {
+  "-" => OpCode::Sub,
+  "!" => OpCode::Not,
+};
+
+PostfixExpr: Box<Expr> = {
+  PrimaryExpr,
+};
+
+PrimaryExpr: Box<Expr> = {
+  Integer => Box::new(Expr::IntegerLiteral(<>)),
+  "(" <Expr> ")"
+};
+
+Integer: u64 = {
+  <n:r"0[xX][a-fA-F0-9]+"> =>? {
+    let mut s = n;
+    s = &s[2..];
+    u64::from_str_radix(s, 16)
+      .map_err(|_| ParseError::User {
+        error: CalculatorError::InputTooBig
+      })
+  },
+  <n:r"[1-9][0-9]*"> =>? {
+    u64::from_str_radix(n, 10)
+      .map_err(|_| ParseError::User {
+        error: CalculatorError::InputTooBig
+      })
+  },
+  <n:r"0[0-7]*"> =>? {
+    let mut s = n;
+    if n.len() > 1 {
+      s = &s[1..];
+    }
+    u64::from_str_radix(s, 8)
+      .map_err(|_| ParseError::User {
+        error: CalculatorError::InputTooBig
+      })
+  },
+};
