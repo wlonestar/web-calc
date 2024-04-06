@@ -1,4 +1,4 @@
-import init, { calculate } from './pkg/web_calculator.js'
+import init, { calculate } from './pkg/web_calc.js'
 
 init().then(() => {
   console.log('initalized');

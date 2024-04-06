@@ -1,5 +1,5 @@
 [package]
-name = "web-calculator"
+name = "web-calc"
 authors = ["wjl <wlonestar@163.com>"]
 version = "0.1.0"
 edition = "2021"
