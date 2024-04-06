@@ -42,3 +42,7 @@ make
 ```bash
 make deploy
 ```
+
+Now we can use it:
+
+![](https://image-1305118058.cos.ap-nanjing.myqcloud.com/image/Snipaste_2024-04-06_22-08-51.jpg)
